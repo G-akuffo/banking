@@ -24,12 +24,13 @@ import CustomInput from "./CustomInput";
 import { authFormSchema } from "./../lib/utils";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { signIn, signUp } from "@/lib/actions/user.actions";
+import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.actions";
 
 const AuthForm = ({ type }: { type: string }) => {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const loggedInUser = getLoggedInUser();
 
   const formSchema = authFormSchema(type);
 
@@ -52,25 +53,20 @@ const AuthForm = ({ type }: { type: string }) => {
         const newUser = await signUp(data);
 
         setUser(newUser);
-        }
       }
 
       if (type === "sign-in") {
-         const response = await signIn({
+        const response = await signIn({
           email: data.email,
           password: data.password,
-        })
-
-       // if(response) router.push('/')
+        });
+        if (response) router.push("/");
       }
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
     }
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
   };
 
   return (
